@@ -261,7 +261,8 @@ function MyNotes() {
   };
 
   const sortNotesByTitle = async () => {
-    const allNotesSorted = [...notes].sort((n1, n2) => n1.title.localeCompare(n2.title));
+    const allNotesSorted = [...notes].sort((n1, n2) =>n1.title.localeCompare(n2.title, 'en', { numeric: true, sensitivity: 'base' }));
+    //const allNotesSorted = [...notes].sort((n1, n2) => n1.title.toLowerCase().localeCompare(n2.title));
     setNotes(allNotesSorted);
   };
 
