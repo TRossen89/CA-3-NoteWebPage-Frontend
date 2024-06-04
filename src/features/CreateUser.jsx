@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { createUser } from "../services/apiFacade";
+import { createUser, loginOrCreateUser } from "../services/apiFacade";
 import backgroundImage from "/src/img/and-machines-vqTWfa4DjEk-unsplash.jpg"; //CHANGE BACKGROUND IMAGE
 
 export default function CreateUser({ setUserJustCreated }) {
@@ -24,6 +24,30 @@ export default function CreateUser({ setUserJustCreated }) {
     setConfirmPassword(e.target.value);
   };
 
+  const callbackForCreateUser = () => {
+    setUserJustCreated(true);
+    navigate("/login");
+  }
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setError("Password and Confirm Password do not match");
+      return;
+    }
+    console.log({ email: email, password: password });
+
+    const userDetailsEntered = { email: email, password: password };
+
+    loginOrCreateUser(userDetailsEntered, "register", callbackForCreateUser, setError);
+  
+  };
+
+
+/*
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -38,6 +62,7 @@ export default function CreateUser({ setUserJustCreated }) {
     try {
       const result = await createUser(userDetailsEntered);
 
+      
       if (result.msg) {
         setError(result.msg);
       } else {
@@ -48,6 +73,7 @@ export default function CreateUser({ setUserJustCreated }) {
       console.error("Error in handleCreateUser:", error);
     }
   };
+  */
 
   return (
     <>

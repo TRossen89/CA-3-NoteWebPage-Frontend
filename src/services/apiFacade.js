@@ -1,6 +1,64 @@
 import { BASE_URL } from "../utils/globalVariables";
 
+const loginOrCreateUser = async (
+  userDetailsAsObject,
+  endOfEndpoint,
+  callback,
+  settingAnError
+) => {
+  try {
+    const result = await fetch(`${BASE_URL}/auth/${endOfEndpoint}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userDetailsAsObject),
+    });
 
+    const dataFromFetch = await result.json();
+
+    if (endOfEndpoint === "register") {
+      if (dataFromFetch.msg) {
+        settingAnError(dataFromFetch.msg);
+      } else {
+        callback();
+      }
+    }
+
+    if (endOfEndpoint === "login") {
+      if (dataFromFetch.msg) {
+        settingAnError(dataFromFetch.msg);
+      } else {
+        console.log(dataFromFetch.token);
+        callback(dataFromFetch);
+      }
+    }
+  } catch (error) {
+    console.error("Error creating entity:", error);
+  }
+};
+
+function createUser(userDetailsEntered) {
+  // Initiate the fetch request
+
+  const result = fetch(`${BASE_URL}/auth/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userDetailsEntered),
+  })
+    .then((result) => {
+      return result.json();
+    })
+    .catch((error) => {
+      console.error("Error creating entity:", error);
+      throw error;
+    });
+
+  return result;
+}
+/*
 function createUser(userDetailsEntered) {
   // Initiate the fetch request
 
@@ -22,7 +80,7 @@ function createUser(userDetailsEntered) {
       throw error; 
     });
 }
-
+*/
 
 const login = async (username, password) => {
   try {
@@ -52,4 +110,4 @@ const login = async (username, password) => {
 };
 
 export { login };
-export { createUser };
+export { createUser, loginOrCreateUser };

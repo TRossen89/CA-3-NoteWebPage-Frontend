@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import styled from "styled-components";
 import { NavLink, Navigate, useNavigate } from "react-router-dom";
+
 const Nav = styled.nav`
   display: flex;
   justify-content: space-between;

@@ -2,15 +2,42 @@ import React, { useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { getUserWithRolesFromToken } from "../utils/decodeToken.js";
-import { login } from "../services/apiFacade.js";
-import backgroundImage from '/src/img/and-machines-vqTWfa4DjEk-unsplash.jpg'; //CHANGE BACKGROUND IMAGE
+import { login, loginOrCreateUser } from "../services/apiFacade.js";
+import backgroundImage from "/src/img/and-machines-vqTWfa4DjEk-unsplash.jpg"; //CHANGE BACKGROUND IMAGE
 
-function Login({ setErrorMessage, errorMessage, setIsLoggedIn, setLoggedInUser, userJustCreated, setUserJustCreated}) {
+function Login({
+  setErrorMessage,
+  errorMessage,
+  setIsLoggedIn,
+  setLoggedInUser,
+  userJustCreated,
+  setUserJustCreated,
+}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
+  const callbackForLogin = (fetchData) => {
+    const userDetails = getUserWithRolesFromToken(fetchData.token);
+    setIsLoggedIn(true);
+    setLoggedInUser(userDetails);
+    setUserJustCreated(false);
+
+    //console.log('Login successful:', userDetails);
+    navigate("/");
+  };
+
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    const userDetailsForFetchCall = {"email": username, "password": password}
+   
+    loginOrCreateUser(userDetailsForFetchCall, "login", callbackForLogin, setErrorMessage);
+    
+  };
+
+/*
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
@@ -31,18 +58,27 @@ function Login({ setErrorMessage, errorMessage, setIsLoggedIn, setLoggedInUser, 
       console.log("Some error happened when logging in. The error: " + err);
     }
   };
+  */
 
   return (
     <>
       <LoginWrapper>
         <LoginPage>
           <Styledwrapper>
-            <h1 style={{fontSize: userJustCreated && ("20px")}}>
-              {userJustCreated ? (<>You're one step away! <br></br>Please log in to access your account</>) : "Login"}</h1>
+            <h1 style={{ fontSize: userJustCreated && "20px" }}>
+              {userJustCreated ? (
+                <>
+                  You're one step away! <br></br>Please log in to access your
+                  account
+                </>
+              ) : (
+                "Login"
+              )}
+            </h1>
             <form onSubmit={handleLogin}>
               <StyledInputBox>
                 <input
-                  type="text" 
+                  type="text"
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -85,7 +121,6 @@ const Styledwrapper = styled.div`
   color: #fff;
   border-radius: 10px;
   padding: 30px 40px;
-  
 
   h1 {
     font-size: 36px;
@@ -106,7 +141,7 @@ const LoginPage = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: url(${backgroundImage}) no-repeat; 
+  background: url(${backgroundImage}) no-repeat;
   background-size: cover;
   background-position: center;
 `;

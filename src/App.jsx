@@ -14,6 +14,7 @@ import ProtectedRoutes from "./utils/ProtectedRoutes.jsx";
 import UserOverview from "./page/UserOverview.jsx";
 
 import MyNotes from "./page/MyNotes.jsx";
+
 //PUSH
 function App() {
   const [userJustCreated, setUserJustCreated] = useState(false);
@@ -24,6 +25,7 @@ function App() {
     name: "",
     roles: ["user"],
   });
+
 
   const navigate = useNavigate();
 
@@ -76,6 +78,7 @@ const checkToken = () => {
 
   return (
     <Routes>
+  
       <Route
         element={
           <ProtectedRoutes isLoggedIn={isLoggedIn}>
