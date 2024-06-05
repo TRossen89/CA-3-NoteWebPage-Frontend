@@ -6,7 +6,6 @@ import {
   updateNote,
   getUserEmails,
 } from "../services/noteService";
-import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import AddNote from "../page/AddNote";
 import Note from "./Note";
@@ -15,7 +14,7 @@ Modal.setAppElement("#root");
 
 
 function MyNotes() {
-  const navigate = useNavigate();
+
   const [addNote, setAddNote] = useState(false);
 
   const [allNotes, setAllNotes] = useState([]);
@@ -78,8 +77,6 @@ function MyNotes() {
     setNotes([...notes].filter((note) => note.title.includes(e.target.value)));
   };
   */
-
-
 
   const sortNotesByCategory = async () => {
     const allNotesSorted = [...notes].sort((n1, n2) => n1.category.localeCompare(n2.category));
@@ -289,6 +286,7 @@ const SearchWrapper = styled.div`
 
 // MY NOTES GRID
 const MyNotesBody = styled.div`
+
   margin: 12px 20px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -299,6 +297,8 @@ const MyNotesBody = styled.div`
 
   justify-items: ${(props) => (props.$oneNote ? "center;" : "")};
   max-width: ${(props) => (props.$oneNote ? "30%;" : "")};
+
+  
   @media (max-width: 970px) {
     max-width: ${(props) => (props.$oneNote ? "70%;" : "")};
   }

@@ -154,6 +154,10 @@ const MainNav = ({ setIsLoggedIn, loggedInUser, setLoggedInUser }) => {
             <StyledNavLink to="/adminPage">AdminPage</StyledNavLink>
           </StyledLi>
         )}
+
+        <StyledLi>
+          <StyledNavLink to="/notesAsList">List of notes</StyledNavLink>
+        </StyledLi>
         <StyledLi>
           <StyledNavLink to="/">Notes</StyledNavLink>
         </StyledLi>

@@ -14,6 +14,8 @@ import ProtectedRoutes from "./utils/ProtectedRoutes.jsx";
 import UserOverview from "./page/UserOverview.jsx";
 
 import MyNotes from "./page/MyNotes.jsx";
+import MySingleNote from "./page/MySingleNote.jsx";
+import MyNotesAsList from "./page/MyNotesAsList.jsx";
 
 //PUSH
 function App() {
@@ -25,6 +27,7 @@ function App() {
     name: "",
     roles: ["user"],
   });
+  const [notesForList, setNotesForlist] = useState([]);
 
 
   const navigate = useNavigate();
@@ -82,7 +85,7 @@ const checkToken = () => {
       <Route
         element={
           <ProtectedRoutes isLoggedIn={isLoggedIn}>
-            <AppLayout
+            <AppLayout path="/"
               setIsLoggedIn={setIsLoggedIn}
               loggedInUser={loggedInUser}
               setLoggedInUser={setLoggedInUser}
@@ -90,9 +93,11 @@ const checkToken = () => {
           </ProtectedRoutes>
         }
       >
-        <Route path="/" element={<MyNotes />} />
+        <Route index element={<MyNotes />} />
         <Route path="/adminPage" element={<UserOverview />} />
         <Route path="/about" element={<About />} />
+        <Route path="/notesAsList" element={<MyNotesAsList notesForList={notesForList} setNotesForlist={setNotesForlist}/>} />
+        <Route path="/singleNote/:noteId" element={<MySingleNote notesForList={notesForList}/>}/>
         <Route path="*" element={<PageNotFound />} />
       </Route>
       <Route
