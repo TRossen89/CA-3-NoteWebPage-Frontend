@@ -155,7 +155,7 @@ function MyNotes() {
         </SearchWrapper>
         <SortSelectWrapper>
           <SortSelect onChange={handleSortChange}>
-            <option selected="selected" disabled>
+            <option value="" disabled selected>
               Sort by...
             </option>
             <option>Category</option>
@@ -242,6 +242,7 @@ const SearchBar = styled.input`
 `;
 
 const AddNoteIcon = styled.div`
+border: solid blue;
   position: absolute;
   right: 113%;
   top: -20%;
@@ -298,7 +299,7 @@ const MyNotesBody = styled.div`
   justify-items: ${(props) => (props.$oneNote ? "center;" : "")};
   max-width: ${(props) => (props.$oneNote ? "30%;" : "")};
 
-  
+
   @media (max-width: 970px) {
     max-width: ${(props) => (props.$oneNote ? "70%;" : "")};
   }

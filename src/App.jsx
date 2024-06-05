@@ -16,6 +16,7 @@ import UserOverview from "./page/UserOverview.jsx";
 import MyNotes from "./page/MyNotes.jsx";
 import MySingleNote from "./page/MySingleNote.jsx";
 import MyNotesAsList from "./page/MyNotesAsList.jsx";
+import MyNotesTobias from "./page/MyNotesTobias.jsx";
 
 //PUSH
 function App() {
@@ -94,6 +95,7 @@ const checkToken = () => {
         }
       >
         <Route index element={<MyNotes />} />
+        <Route path="/myNotesTobias" element={<MyNotesTobias/>}/>
         <Route path="/adminPage" element={<UserOverview />} />
         <Route path="/about" element={<About />} />
         <Route path="/notesAsList" element={<MyNotesAsList notesForList={notesForList} setNotesForlist={setNotesForlist}/>} />

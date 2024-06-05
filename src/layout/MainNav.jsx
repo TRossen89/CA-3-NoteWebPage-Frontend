@@ -149,15 +149,19 @@ const MainNav = ({ setIsLoggedIn, loggedInUser, setLoggedInUser }) => {
       <Hamburger onClick={() => setOpen(!open)}>☰</Hamburger>
       <MenuContainer open={open}>
       <Menu open={open}>     
+
+        <StyledLi>
+          <StyledNavLink to="/myNotesTobias">Notes by Tobias</StyledNavLink>
+        </StyledLi>
+        <StyledLi>
+          <StyledNavLink to="/notesAsList">List of notes</StyledNavLink>
+        </StyledLi>
+
         {loggedInUser.roles.includes("admin") && (
           <StyledLi>
             <StyledNavLink to="/adminPage">AdminPage</StyledNavLink>
           </StyledLi>
         )}
-
-        <StyledLi>
-          <StyledNavLink to="/notesAsList">List of notes</StyledNavLink>
-        </StyledLi>
         <StyledLi>
           <StyledNavLink to="/">Notes</StyledNavLink>
         </StyledLi>
