@@ -31,7 +31,6 @@ const Note = ({ note, handleDelete, handleUpdateNote }) => {
     };
   
     const toggleEditing = () => {
-       alert(window.innerHeight);
       setIsEditing(!isEditing);
     };
   
