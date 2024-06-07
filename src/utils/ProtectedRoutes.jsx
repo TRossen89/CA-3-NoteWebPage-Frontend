@@ -3,9 +3,11 @@ import { Outlet, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
 export function ProtectedRoutes({ children, isLoggedIn }) {
+
   const navigate = useNavigate();
 
   useEffect(() => {
+    
     if(!isLoggedIn) {
       return navigate("/login" );
     }
@@ -15,7 +17,7 @@ export function ProtectedRoutes({ children, isLoggedIn }) {
     }
   }, [isLoggedIn]);
 
-  return children;
+  if(isLoggedIn) {return children};
 }
 
 export default ProtectedRoutes;

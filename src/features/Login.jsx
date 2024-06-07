@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { getUserWithRolesFromToken } from "../utils/decodeToken.js";
@@ -6,36 +6,70 @@ import { login, loginOrCreateUser } from "../services/apiFacade.js";
 import backgroundImage from "/src/img/and-machines-vqTWfa4DjEk-unsplash.jpg"; //CHANGE BACKGROUND IMAGE
 
 function Login({
+  setTokenStored,
   setErrorMessage,
   errorMessage,
   setIsLoggedIn,
   setLoggedInUser,
   userJustCreated,
   setUserJustCreated,
+  checkingCredentials,
+  setCheckingCredentials
 }) {
+  
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showMessage, setShowMessage] = useState(false)
+  
 
   const navigate = useNavigate();
 
-  const callbackForLogin = (fetchData) => {
-    const userDetails = getUserWithRolesFromToken(fetchData.token);
-    setIsLoggedIn(true);
-    setLoggedInUser(userDetails);
-    setUserJustCreated(false);
+  const handleQuestion = () =>{
+    setShowMessage(true);
 
-    //console.log('Login successful:', userDetails);
-    navigate("/");
-  };
-
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    const userDetailsForFetchCall = {"email": username, "password": password}
-   
-    loginOrCreateUser(userDetailsForFetchCall, "login", callbackForLogin, setErrorMessage);
-    
+    setCheckingCredentials(true);
+
   };
+
+  useEffect(()=>{
+
+    const callbackForLogin = (fetchData) => {
+      const userDetails = getUserWithRolesFromToken(fetchData.token);
+      setIsLoggedIn(true);
+      setTokenStored(true);
+      setLoggedInUser(userDetails);
+      setUserJustCreated(false);
+  
+      //console.log('Login successful:', userDetails);
+      navigate("/");
+    };
+
+    const checkingCredentialsWithDelay = async () =>{
+
+      const userDetailsForFetchCall = {"email": username, "password": password}
+      
+      setTimeout(async () => {
+        // Pretending to have a lot of security meausures to check before credentials can be approved
+        const error = await loginOrCreateUser(userDetailsForFetchCall, "login", callbackForLogin, setErrorMessage);
+      if(error){
+        setErrorMessage("Error from catch: " + error);
+      }else{
+        alert("Credentials checked")
+        setShowMessage(false);
+      }
+      }, 2500);
+    
+    }
+
+    if(checkingCredentials){
+      checkingCredentialsWithDelay();
+    }
+    
+  }, [checkingCredentials])
 
 /*
   const handleLogin = async (event) => {
@@ -64,6 +98,11 @@ function Login({
     <>
       <LoginWrapper>
         <LoginPage>
+        
+        {checkingCredentials ? (<Styledwrapper><StyledButton onClick={handleQuestion}>What is happening?</StyledButton><br></br>
+        
+        {showMessage && <Styledh1>We are pretending that we are taking our time checking your credentials</Styledh1>}</Styledwrapper>) : (
+          
           <Styledwrapper>
             <h1 style={{ fontSize: userJustCreated && "20px" }}>
               {userJustCreated ? (
@@ -75,6 +114,7 @@ function Login({
                 "Login"
               )}
             </h1>
+ 
             <form onSubmit={handleLogin}>
               <StyledInputBox>
                 <input
@@ -105,12 +145,25 @@ function Login({
             </StyledRegisterLink>
 
             {errorMessage && <p>{errorMessage}</p>}
-          </Styledwrapper>
+          </Styledwrapper>)}
+
         </LoginPage>
       </LoginWrapper>
     </>
   );
 }
+
+
+const Styledh1 = styled.div`
+
+  margin-top: 3vw;
+  padding: 1vw;
+  font-size: 2vw;
+  color: white;
+  text-align: center;
+
+`
+
 
 const Styledwrapper = styled.div`
   width: 420px;

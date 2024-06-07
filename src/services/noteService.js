@@ -53,10 +53,14 @@ const readAllNotes = async () => {
 
       return theResult;
     }
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+
+    console.log("The error: " + error);
+    throw error;
   }
 };
+
+
 
 const readNote = async () => {
   try {

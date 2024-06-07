@@ -127,7 +127,7 @@ const HorisontalLine = styled.hr`
   }
 `;
 
-const MainNav = ({ setIsLoggedIn, loggedInUser, setLoggedInUser }) => {
+const MainNav = ({ setIsLoggedIn, loggedInUser, setLoggedInUser, setCheckingCredentials }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -136,6 +136,7 @@ const MainNav = ({ setIsLoggedIn, loggedInUser, setLoggedInUser }) => {
     localStorage.clear();
     localStorage.clear();
     setLoggedInUser({ email: "", name: "", roles: ["user"] });
+    setCheckingCredentials(false);
     navigate("/login");
     console.log("Logged out" )
     navigate("/login");
@@ -157,11 +158,11 @@ const MainNav = ({ setIsLoggedIn, loggedInUser, setLoggedInUser }) => {
           <StyledNavLink to="/notesAsList">List of notes</StyledNavLink>
         </StyledLi>
 
-        {loggedInUser.roles.includes("admin") && (
+        {loggedInUser.roles.includes("admin") ? (
           <StyledLi>
             <StyledNavLink to="/adminPage">AdminPage</StyledNavLink>
           </StyledLi>
-        )}
+        ) : (<></>) }
         <StyledLi>
           <StyledNavLink to="/">Notes</StyledNavLink>
         </StyledLi>

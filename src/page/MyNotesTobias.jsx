@@ -9,11 +9,14 @@ import {
 import Modal from "react-modal";
 import AddNote from "../page/AddNote";
 import NoteTobias from "./NoteTobias";
+import ErrorBoundaryMyNotes from "../errorBoundaries/ErrorBoundaryMyNotes.jsx";
 
 Modal.setAppElement("#root");
 
-
 function MyNotesTobias() {
+
+  const [errorNote, setErrorNote] = useState("");
+
   const [addNote, setAddNote] = useState(false);
 
   const [allNotes, setAllNotes] = useState([]);
@@ -101,56 +104,71 @@ function MyNotesTobias() {
     setNotes(allNotesSorted);
   };
 
-  const fetchAllNotes = async () => {
-    const allNotes = await readAllNotes();
-    console.log(allNotes);
-    setAllNotes(allNotes);
-    setNotes(allNotes);
-  };
+  
+  
 
   useEffect(() => {
-    fetchAllNotes();
+    
+    const fetchAllNotes = async () => {
+      try{
+      const allNotes = await readAllNotes();
+      console.log(allNotes);
+      setAllNotes(allNotes);
+      setNotes(allNotes);
+  
+      }catch (error){
+  
+        setErrorNote("An error occurred. The error: " + error);
+      }
+    };
+    
+      fetchAllNotes();
+  
   }, []);
 
   useEffect(() => {
     filterNotes(query);
   }, [query]);
 
+
+  if(errorNote){
+    return (<div> {errorNote} </div>)
+  }
   return (
-    <>
+
+
       <PageContainerTobias>
-      
-          <Modal
-            className="modal"
-            isOpen={addNoteModalIsOpen}
-            onRequestClose={() => {
-              setAddNoteModalIsOpen(false);
-              setAddNote(false);
-            }}
-            style={{
-          overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.617)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            height: "100%",
-          },
-        }}
-          >
-            <AddNotePopUp>
-              <i
-                className="bx bx-x"
-                onClick={() => setAddNoteModalIsOpen(false)}
-              ></i>
-              <AddNote
-                setAddNoteModalIsOpen={setAddNoteModalIsOpen}
-                setNotes={setNotes}
-                setAllNotes={setAllNotes}
-              />
-            </AddNotePopUp>
-          </Modal>
-          
+        <Modal
+          className="modal"
+          isOpen={addNoteModalIsOpen}
+          onRequestClose={() => {
+            setAddNoteModalIsOpen(false);
+            setAddNote(false);
+          }}
+          style={{
+            overlay: {
+              backgroundColor: "rgba(0, 0, 0, 0.617)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              height: "100%",
+            },
+          }}
+        >
+          <AddNotePopUp>
+            <i
+              className="bx bx-x"
+              onClick={() => setAddNoteModalIsOpen(false)}
+            ></i>
+            <AddNote
+              setAddNoteModalIsOpen={setAddNoteModalIsOpen}
+              setNotes={setNotes}
+              setAllNotes={setAllNotes}
+            />
+          </AddNotePopUp>
+        </Modal>
+
         <SearchSortAndAddNoteDivTobias>
           <SortDropdownDivTobias>
             <SortDropdownTobias
@@ -173,8 +191,6 @@ function MyNotesTobias() {
             <i className="bx bx-search"></i>
           </SearchFieldDivTobias>
 
-            
-
           <AddNoteDivTobias>
             <i
               className="bx bxs-file-plus"
@@ -183,7 +199,9 @@ function MyNotesTobias() {
           </AddNoteDivTobias>
         </SearchSortAndAddNoteDivTobias>
 
+          
         <NotesGridContainerTobias>
+      
           {notes.map((note) => (
             <NoteTobias
               note={note}
@@ -192,9 +210,11 @@ function MyNotesTobias() {
               key={note.id}
             />
           ))}
+  
         </NotesGridContainerTobias>
+        
       </PageContainerTobias>
-    </>
+    
   );
 }
 

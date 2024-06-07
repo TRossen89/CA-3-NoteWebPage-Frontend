@@ -1,10 +1,10 @@
 import Header from "./Header.jsx";
 import { Outlet } from "react-router-dom";
 
-function AppLayout({setIsLoggedIn, loggedInUser, setLoggedInUser}) {
+function AppLayout({setIsLoggedIn, loggedInUser, setLoggedInUser, setCheckingCredentials}) {
     return (
       <>
-        <Header setIsLoggedIn={setIsLoggedIn} loggedInUser={loggedInUser} setLoggedInUser={setLoggedInUser}/>
+        <Header setIsLoggedIn={setIsLoggedIn} loggedInUser={loggedInUser} setLoggedInUser={setLoggedInUser} setCheckingCredentials={setCheckingCredentials}/>
         <Outlet />
       </>
     );

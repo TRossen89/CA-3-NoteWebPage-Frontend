@@ -1,9 +1,9 @@
 import MainNav from "./MainNav.jsx";
 
-function Header({setIsLoggedIn, loggedInUser, setLoggedInUser}) {
+function Header({setIsLoggedIn, loggedInUser, setLoggedInUser, setCheckingCredentials}) {
     return (
       <>
-        <MainNav setIsLoggedIn={setIsLoggedIn} loggedInUser={loggedInUser} setLoggedInUser={setLoggedInUser}/>
+        <MainNav setIsLoggedIn={setIsLoggedIn} loggedInUser={loggedInUser} setLoggedInUser={setLoggedInUser} setCheckingCredentials={setCheckingCredentials}/>
       </>
     );
   }

@@ -15,13 +15,17 @@ import UserOverview from "./page/UserOverview.jsx";
 
 import MyNotes from "./page/MyNotes.jsx";
 import MySingleNote from "./page/MySingleNote.jsx";
-import MyNotesAsList from "./page/MyNotesAsList.jsx";
+import MyNotesAsList from "./page/MyNotesAsListTobias.jsx";
 import MyNotesTobias from "./page/MyNotesTobias.jsx";
+import ErrorBoundaryMyNotes from "./errorBoundaries/ErrorBoundaryMyNotes.jsx";
+import ErrorBoundaryMyNotesClass from "./errorBoundaries/ErrorClassBoundary.jsx";
+import SingleNote from "./page/SingleNote.jsx";
 
 //PUSH
 function App() {
   const [userJustCreated, setUserJustCreated] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [checkingCredentials, setCheckingCredentials] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loggedInUser, setLoggedInUser] = useState({
     email: "",
@@ -29,89 +33,108 @@ function App() {
     roles: ["user"],
   });
   const [notesForList, setNotesForlist] = useState([]);
+  const [tokenStored, setTokenStored] = useState(false)
 
 
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/");
-    }
-  }, [isLoggedIn]);
 
   const checkTokenExpiry = (exp) => {
     return Date.now() >= exp * 1000;
   };
 
-useEffect(() => {
-      // Check the token right away
-      checkToken();
-  
-      // Then check the token every 15 minutes
-      const intervalId = setInterval(checkToken, 15 * 60 * 1000);
+  const checkToken = () => {
     
-      // Clear the interval when the component is unmounted
-      return () => clearInterval(intervalId);
-}, [])
+    const token = localStorage.getItem("token");
+    console.log("Checking token: " + token);
+    
+    if (token) {
+      console.log("There is a token");
+      try {
+        console.log("Decoding token");
+        const decodedToken = jwtDecode(token);
+        
+        console.log("Checking if token has expired")
+        
+        if (checkTokenExpiry(decodedToken.exp)) {
+          /*setIsLoggedIn(true);
+          setLoggedInUser({
+            email: decodedToken.email,
+            name: decodedToken.name,
+            roles: decodedToken.roles,
+          });
 
-const checkToken = () => {
-  console.log("Checking token: " + localStorage.getItem("token"));
-  const token = localStorage.getItem("token");
-  if (token) {
-    try {
-      const decodedToken = jwtDecode(token);
-      if (!checkTokenExpiry(decodedToken.exp)) {
-        setIsLoggedIn(true);
-        setLoggedInUser({
-          email: decodedToken.email,
-          name: decodedToken.name,
-          roles: decodedToken.roles,
-        });
-      } else {
+        } else {*/
+          console.log("Token has expired")
+          setIsLoggedIn(false);
+          console.log("Logged in or not: " + isLoggedIn);
+          
+          setErrorMessage("Your session has expired. Please log in again.");
+          localStorage.clear();
+        }
+      } catch (e) {
+        console.log("Some error happened when checking token")
         setIsLoggedIn(false);
-        setErrorMessage("Your session has expired. Please log in again.");
-        localStorage.clear();
       }
-    } catch (e) {
+    } else {
+      console.log("There was no token")
       setIsLoggedIn(false);
     }
-  } else {
-    setIsLoggedIn(false);
-  }
-};
+  };
+
+
+useEffect(() => {
+      // Check the token right away
+      //checkToken();
+  
+      if(tokenStored){
+        const intervalId = setInterval(checkToken, 30 * 60 * 1000 + 100);
+        return () => clearInterval(intervalId);
+
+      }
+      
+}, [tokenStored])
+
 
   return (
     <Routes>
   
-      <Route
+      <Route path="/"
         element={
-          <ProtectedRoutes isLoggedIn={isLoggedIn}>
-            <AppLayout path="/"
+          <ProtectedRoutes  isLoggedIn={isLoggedIn}>
+            <AppLayout 
               setIsLoggedIn={setIsLoggedIn}
               loggedInUser={loggedInUser}
               setLoggedInUser={setLoggedInUser}
+              setCheckingCredentials={setCheckingCredentials}
             />
           </ProtectedRoutes>
         }
       >
+
         <Route index element={<MyNotes />} />
         <Route path="/myNotesTobias" element={<MyNotesTobias/>}/>
         <Route path="/adminPage" element={<UserOverview />} />
         <Route path="/about" element={<About />} />
-        <Route path="/notesAsList" element={<MyNotesAsList notesForList={notesForList} setNotesForlist={setNotesForlist}/>} />
+        <Route path="/notesAsList" element={<ErrorBoundaryMyNotesClass><MyNotesAsList notesForList={notesForList} setNotesForlist={setNotesForlist}/></ErrorBoundaryMyNotesClass>}>
+          <Route path=":singleNoteId" element={<SingleNote notesForList={notesForList} />}/>
+        </Route>
+
         <Route path="/singleNote/:noteId" element={<MySingleNote notesForList={notesForList}/>}/>
         <Route path="*" element={<PageNotFound />} />
+
       </Route>
       <Route
         path="/login"
         element={
           <Login
+            setTokenStored={setTokenStored}
             setErrorMessage={setErrorMessage}
             errorMessage={errorMessage}
             setIsLoggedIn={setIsLoggedIn}
             setLoggedInUser={setLoggedInUser}
             userJustCreated={userJustCreated}
             setUserJustCreated={setUserJustCreated}
+            checkingCredentials={checkingCredentials}
+            setCheckingCredentials={setCheckingCredentials}
           />
         }
       />

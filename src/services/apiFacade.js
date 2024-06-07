@@ -35,6 +35,7 @@ const loginOrCreateUser = async (
     }
   } catch (error) {
     console.error("Error creating entity:", error);
+    return error;
   }
 };
 
