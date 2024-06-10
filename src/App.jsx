@@ -41,6 +41,8 @@ function App() {
     return Date.now() >= exp * 1000;
   };
 
+  
+
   const checkToken = () => {
     
     const token = localStorage.getItem("token");
@@ -54,15 +56,15 @@ function App() {
         
         console.log("Checking if token has expired")
         
-        if (checkTokenExpiry(decodedToken.exp)) {
-          /*setIsLoggedIn(true);
+        if (!checkTokenExpiry(decodedToken.exp)) {
+          setIsLoggedIn(true);
           setLoggedInUser({
             email: decodedToken.email,
             name: decodedToken.name,
             roles: decodedToken.roles,
           });
 
-        } else {*/
+        } else {
           console.log("Token has expired")
           setIsLoggedIn(false);
           console.log("Logged in or not: " + isLoggedIn);
@@ -82,16 +84,34 @@ function App() {
 
 
 useEffect(() => {
-      // Check the token right away
-      //checkToken();
-  
-      if(tokenStored){
-        const intervalId = setInterval(checkToken, 30 * 60 * 1000 + 100);
-        return () => clearInterval(intervalId);
-
-      }
       
-}, [tokenStored])
+      let timer;
+      checkToken();
+      
+
+      if(tokenStored){
+        console.log("Token is stored")
+        const token = localStorage.getItem("token")
+
+  
+      if(token)
+        console.log("Token is retrieved from localStorage")
+
+        {
+          const decodedToken = jwtDecode(token);
+          console.log("Exp from token: " + decodedToken.exp)
+          console.log(Date.now());
+          const timeForExp = decodedToken.exp*1000 - Date.now() + 200;
+          console.log("Expiration time: " + timeForExp)
+
+          timer = setTimeout(()=>{console.log("token is being checked again"); checkToken(); }, timeForExp);
+
+          }
+        
+          return () => {clearTimeout(timer)};
+        }
+
+      }, [tokenStored]);
 
 
   return (
@@ -114,7 +134,7 @@ useEffect(() => {
         <Route path="/myNotesTobias" element={<MyNotesTobias/>}/>
         <Route path="/adminPage" element={<UserOverview />} />
         <Route path="/about" element={<About />} />
-        <Route path="/notesAsList" element={<ErrorBoundaryMyNotesClass><MyNotesAsList notesForList={notesForList} setNotesForlist={setNotesForlist}/></ErrorBoundaryMyNotesClass>}>
+        <Route path="/notesAsList/*" element={<ErrorBoundaryMyNotesClass><MyNotesAsList notesForList={notesForList} setNotesForlist={setNotesForlist}/></ErrorBoundaryMyNotesClass>}>
           <Route path=":singleNoteId" element={<SingleNote notesForList={notesForList} />}/>
         </Route>
 

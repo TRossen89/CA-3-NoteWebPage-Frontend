@@ -6,9 +6,10 @@ import {
   updateNote,
   getUserEmails,
 } from "../services/noteService";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, Router, Route, Routes } from "react-router-dom";
 
 import Note from "./Note";
+import SingleNote from "./SingleNote";
 
 
 function MyNotesAsList({notesForList, setNotesForlist}) {
@@ -32,6 +33,12 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
       console.log("Id from button: " + event.target.id)
 
   }
+
+  const seeNoteDirectlyNested = (id)=>
+    {
+      navigate(`nestedDirectlyInComponent/${id}`);
+
+    }
 
   const eventBubblingHandling = (event) =>{
 
@@ -75,6 +82,7 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
     <ShowId>{idShowing}</ShowId>
     <button id='errortrigger' onClick={triggerAnError} >Trigger Error</button>
     </div>
+    
       
 
     <DivForNotesListAndSingleNote>
@@ -92,7 +100,7 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
         <th>Title</th>
         <th>Date</th>
         <th>Action1</th>
-        <th>Action2</th>
+       
         </tr>
         </thead>
 
@@ -106,6 +114,7 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
               <button id= {note.id} /*onClick={() => seeEventBubbling(note.id)}*/>See event bubbling</button>
               
             </td>
+          
             
           </tr>
         ))}
@@ -119,7 +128,9 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
         <tr>
         <th>Title</th>
         <th>Date</th>
-        <th>Action</th>
+        <th>Action1</th>
+        <th>Action2</th>
+        <th>Action3</th>
         </tr>
         </thead>
 
@@ -135,6 +146,9 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
             <td>
               <button onClick={() => seeNoteHere(note.id)}>See Note On This Page</button>
             </td>
+            <td>
+              <button onClick={() => seeNoteDirectlyNested(note.id)}>See note directly nested</button>
+            </td>
           </tr>
         ))}
         </tbody>
@@ -144,6 +158,10 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
       <ShowSingleNoteDiv>
         <Outlet/>
       </ShowSingleNoteDiv>
+
+      <Routes>
+        <Route path="nestedDirectlyInComponent/:theId" element={<SingleNote notesForList={notesForList}/>}/>
+      </Routes>
       </DivForNotesListAndSingleNote>
       
     </PageContainerForNotes>

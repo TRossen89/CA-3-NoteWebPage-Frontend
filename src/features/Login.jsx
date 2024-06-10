@@ -14,28 +14,25 @@ function Login({
   userJustCreated,
   setUserJustCreated,
   checkingCredentials,
-  setCheckingCredentials
+  setCheckingCredentials,
 }) {
-  
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [showMessage, setShowMessage] = useState(false)
-  
+  const [showMessage, setShowMessage] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleQuestion = () =>{
+  const handleQuestion = () => {
     setShowMessage(true);
-
-  }
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
     setCheckingCredentials(true);
-
   };
 
-  useEffect(()=>{
+  useEffect(() => {
+    let timer;
 
     const callbackForLogin = (fetchData) => {
       const userDetails = getUserWithRolesFromToken(fetchData.token);
@@ -43,35 +40,62 @@ function Login({
       setTokenStored(true);
       setLoggedInUser(userDetails);
       setUserJustCreated(false);
-  
+
       //console.log('Login successful:', userDetails);
       navigate("/");
     };
 
-    const checkingCredentialsWithDelay = async () =>{
+    const checkingCredentialsWithDelay = async () => {
+      const userDetailsForFetchCall = { email: username, password: password };
 
-      const userDetailsForFetchCall = {"email": username, "password": password}
-      
-      setTimeout(async () => {
+      timer = setTimeout(async () => {
+        try {
+          const returnValue = await loginOrCreateUser(
+            userDetailsForFetchCall,
+            "login"
+          );
+
+          alert("Credentials checked");
+          setShowMessage(false);
+
+          if(returnValue.msg){
+            console.log("There is an error with login in backend: " + returnValue.msg);
+            setCheckingCredentials(false);
+            setErrorMessage(returnValue.msg);
+          
+          }
+          else{
+            callbackForLogin(returnValue);
+          }
+
+        } catch (error) {
+          alert("Credentials checked");
+          setCheckingCredentials(false);
+          setErrorMessage(error.errorMessage);
+        }
         // Pretending to have a lot of security meausures to check before credentials can be approved
-        const error = await loginOrCreateUser(userDetailsForFetchCall, "login", callbackForLogin, setErrorMessage);
-      if(error){
-        setErrorMessage("Error from catch: " + error);
-      }else{
-        alert("Credentials checked")
-        setShowMessage(false);
+      }, 3500);
+    };
+
+    if (checkingCredentials) {
+      try {
+        checkingCredentialsWithDelay();
+      } catch (error) {
+        setErrorMessage(error.errorMessage);
       }
-      }, 2500);
-    
     }
 
-    if(checkingCredentials){
-      checkingCredentialsWithDelay();
-    }
-    
-  }, [checkingCredentials])
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+        setShowMessage(false);
+        
+        setCheckingCredentials(false);
+      }
+    };
+  }, [checkingCredentials]);
 
-/*
+  /*
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
@@ -98,72 +122,78 @@ function Login({
     <>
       <LoginWrapper>
         <LoginPage>
-        
-        {checkingCredentials ? (<Styledwrapper><StyledButton onClick={handleQuestion}>What is happening?</StyledButton><br></br>
-        
-        {showMessage && <Styledh1>We are pretending that we are taking our time checking your credentials</Styledh1>}</Styledwrapper>) : (
-          
-          <Styledwrapper>
-            <h1 style={{ fontSize: userJustCreated && "20px" }}>
-              {userJustCreated ? (
-                <>
-                  You're one step away! <br></br>Please log in to access your
-                  account
-                </>
-              ) : (
-                "Login"
+          {checkingCredentials ? (
+            <Styledwrapper>
+              <StyledButton onClick={handleQuestion}>
+                What is happening?
+              </StyledButton>
+              <br></br>
+
+              {showMessage && (
+                <Styledh1>
+                  We are pretending that we are taking our time checking your
+                  credentials
+                </Styledh1>
               )}
-            </h1>
- 
-            <form onSubmit={handleLogin}>
-              <StyledInputBox>
-                <input
-                  type="text"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-                <i className="bx bxs-user"></i>
-              </StyledInputBox>
-              <StyledInputBox>
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <i className="bx bxs-lock-alt"></i>
-              </StyledInputBox>
-              <StyledButton type="submit">Login</StyledButton>
-            </form>
+            </Styledwrapper>
+          ) : (
+            <Styledwrapper>
+              <h1 style={{ fontSize: userJustCreated && "20px" }}>
+                {userJustCreated ? (
+                  <>
+                    You're one step away! <br></br>Please log in to access your
+                    account
+                  </>
+                ) : (
+                  "Login"
+                )}
+              </h1>
 
-            <StyledRegisterLink>
-              <p>
-                Don't have an account?
-                <a href={"/createUser"}> Register</a>
-              </p>
-            </StyledRegisterLink>
+              <form onSubmit={handleLogin}>
+                <StyledInputBox>
+                  <input
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                  <i className="bx bxs-user"></i>
+                </StyledInputBox>
+                <StyledInputBox>
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <i className="bx bxs-lock-alt"></i>
+                </StyledInputBox>
+                <StyledButton type="submit">Login</StyledButton>
+              </form>
 
-            {errorMessage && <p>{errorMessage}</p>}
-          </Styledwrapper>)}
+              <StyledRegisterLink>
+                <p>
+                  Don't have an account?
+                  <a href={"/createUser"}> Register</a>
+                </p>
+              </StyledRegisterLink>
 
+              {errorMessage && <p>{errorMessage}</p>}
+            </Styledwrapper>
+          )}
         </LoginPage>
       </LoginWrapper>
     </>
   );
 }
 
-
 const Styledh1 = styled.div`
-
   margin-top: 3vw;
   padding: 1vw;
   font-size: 2vw;
   color: white;
   text-align: center;
-
-`
-
+`;
 
 const Styledwrapper = styled.div`
   width: 420px;

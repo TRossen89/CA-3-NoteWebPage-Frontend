@@ -41,8 +41,15 @@ export default function CreateUser({ setUserJustCreated }) {
 
     const userDetailsEntered = { email: email, password: password };
 
-    loginOrCreateUser(userDetailsEntered, "register", callbackForCreateUser, setError);
-  
+    const returnValue = await loginOrCreateUser(userDetailsEntered, "register");
+    
+    if(returnValue.msg){
+      console.log("There is an error message when creating user: " + returnValue.msg);
+      setError(returnValue.msg);
+    }
+    else{
+      callbackForCreateUser();
+    }
   };
 
 

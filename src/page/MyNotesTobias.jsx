@@ -79,14 +79,14 @@ function MyNotesTobias() {
   };
   */
 
-  const sortNotesByCategory = async () => {
+  const sortNotesByCategory = () => {
     const allNotesSorted = [...notes].sort((n1, n2) =>
       n1.category.localeCompare(n2.category)
     );
     setNotes(allNotesSorted);
   };
 
-  const sortNotesByTitle = async () => {
+  const sortNotesByTitle = () => {
     const allNotesSorted = [...notes].sort((n1, n2) =>
       n1.title.localeCompare(n2.title, "en", {
         numeric: true,
@@ -97,7 +97,7 @@ function MyNotesTobias() {
     setNotes(allNotesSorted);
   };
 
-  const sortNotesByDate = async () => {
+  const sortNotesByDate =  () => {
     const allNotesSorted = [...notes].sort((n1, n2) =>
       n1.date.localeCompare(n2.date)
     );
@@ -299,8 +299,8 @@ const NotesGridContainerTobias = styled.div`
   padding: 1vw;
 
   display: grid;
-  grid-template-columns: repeat(3, 28vw);
-  grid-auto-rows: 25vw;
+  grid-template-columns: repeat(2, 36vw);
+  grid-auto-rows: 38vw;
 
   grid-gap: 3vw;
 

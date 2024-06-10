@@ -15,19 +15,17 @@ const NoteTobias = ({ note, handleDelete, handleUpdateNote }) => {
   const [contentChanged, setContentChanged] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-
-
   const toggleEditing = () => {
     setIsEditing(!isEditing);
   };
 
   const saveEdit = () => {
-    handleUpdateNote(note, noteContent, noteTitle, category)
+    handleUpdateNote(note, noteContent, noteTitle, category);
     setIsEditing(!isEditing);
-  }
+  };
   const saveTitleEdit = () => {
-    handleUpdateNote(note, noteContent, noteTitle, category)
-  }
+    handleUpdateNote(note, noteContent, noteTitle, category);
+  };
 
   const handleInputChange = (event) => {
     setContentChanged(true);
@@ -65,168 +63,91 @@ const NoteTobias = ({ note, handleDelete, handleUpdateNote }) => {
 
   return (
     <MainNoteDiv>
-    <NoteHead>
-          <NoteCategory>{note.category}</NoteCategory>
-          <NoteDeleteButton onClick={() => {handleDelete(note)}}>Delete</NoteDeleteButton>
-        </NoteHead>
-      <NoteBackgroundPaper $editBackground={isEditing ? 'editing' : 'notEditing'}>
-      <NoteTitleWrapper>
-          <NoteTitle id="title" value={noteTitle} onChange={handleInputChange} onBlur={saveTitleEdit}/>
+      <NoteBackgroundPaper
+        $editBackground={isEditing ? "editing" : "notEditing"}
+      >
+        <NoteHead>
+          <CategoryWrapper className="noteHeadWrapper">
+            <NoteCategory>{note.category}</NoteCategory>
+          </CategoryWrapper>
+
+          <NoteTitleWrapper className="noteHeadWrapper">
+            <NoteTitle
+              id="title"
+              value={noteTitle}
+              onChange={handleInputChange}
+              onBlur={saveTitleEdit}
+            />
           </NoteTitleWrapper>
+
+          <DateWrapper className="noteHeadWrapper">
+            <StyledDate>{note.date}</StyledDate>
+          </DateWrapper>
+        </NoteHead>
 
         <TextAreaForEditing
           id="content"
-
           onClick={toggleEditing}
           onBlur={saveEdit}
           value={noteContent}
           onChange={handleInputChange}
         />
-
-        <NoteFoot></NoteFoot>
       </NoteBackgroundPaper>
+
+      <NoteFoot>
+        <NoteDeleteButton
+          onClick={() => {
+            handleDelete(note);
+          }}
+        >
+          Delete
+        </NoteDeleteButton>
+      </NoteFoot>
     </MainNoteDiv>
-
-    /*<>
-
-
-
-      <NoteWrapper>
-        <i className="bx bx-x" onClick={() => handleDelete(note)}></i>
-        {contentChanged ? (
-          <i
-            className="bx bx-check"
-            onClick={() => {
-              handleUpdateNote(note, noteContent, noteTitle, category);
-              setContentChanged(false);
-            }}
-          ></i>
-        ) : (
-          <i className="bx bx-radio-circle"></i>
-        )}
-        <CategoryDiv $category={category} onClick={handleCategoryChange}>
-          <p>{category}</p>
-        </CategoryDiv>
-
-        <StyledDate>{note.date}</StyledDate>
-
-        <ContentWrapper>
-          {isEditing ? (
-            <StyledTitleEdit
-              id="title"
-              onBlur={toggleEditing}
-              value={noteTitle}
-              onChange={handleInputChange}
-            />
-          ) : (
-            <StyledTitleDisplay onClick={toggleEditing}>
-              {noteTitle}
-            </StyledTitleDisplay>
-          )}
-          <hr></hr>
-          <StyledTextArea
-            id="content"
-            value={noteContent}
-            onChange={handleInputChange}
-          />
-        </ContentWrapper>
-        <div>
-          <ColabIcon>
-            <i
-              className="bx bxs-user-plus"
-              onClick={() => setModalIsOpen(true)}
-            ></i>
-          </ColabIcon>
-          </div>
-
-          <Modal
-            className="modal"
-            isOpen={modalIsOpen}
-            onRequestClose={() => setModalIsOpen(false)}
-            style={{
-              overlay: {
-                backgroundColor: "rgba(0, 0, 0, 0.617)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              },
-            }}
-          >
-            <StyledPopup>
-              <i className="bx bx-x" onClick={() => setModalIsOpen(false)}></i>
-              <PopupTitle>Add Collaborator</PopupTitle>
-              <form
-                onSubmit={addColaboratroSubmit}
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <input
-                  style={{
-                    padding: "5px",
-                    width: "50%",
-                    height: "30px",
-                    borderRadius: "5px",
-                    margin: "10px",
-                    border: "none",
-                  }}
-                  type="text"
-                  onChange={handleChange}
-                />
-                <button
-                  type="submit"
-                  style={{
-                    padding: "10px",
-                    width: "50%",
-                    height: "40px",
-                    borderRadius: "5px",
-                    border: "none",
-                  }}
-                >
-                  add collaborator
-                </button>
-              </form>
-              {!isEditing ? (
-                <>
-                  <h3>Collaborators</h3>
-                  <hr></hr>
-                  <div
-                    style={{
-                      maxHeight: "84px", // Adjust as needed
-                      overflowY: "auto",
-                    }}
-                  >
-                    {note.colaborators.map((c) => (
-                      <a key={c}>
-                        {c}
-                        <br></br>
-                      </a>
-                    ))}
-                  </div>
-                </>
-              ) : null}
-            </StyledPopup>
-          </Modal>
-        
-      </NoteWrapper>
-    </>*/
   );
 };
 
 export default NoteTobias;
 
+const CategoryWrapper = styled.div`
+display: flex;
+align-items: center;
+border: solid black`;
+
+const DateWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  border: solid blue;
+  
+`;
+
+const StyledDate = styled.div`
+  display: flex;
+  align-items: center;
+  border: solid pink;
+
+  font-size: 0.8vw;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px 10px 10px 0;
+
+  color: black;
+  text-align: center;
+
+  width: auto;
+`;
+
 const MainNoteDiv = styled.div`
   border: solid red;
-  padding: .8vw;
-  
+  padding: 0.8vw;
+
   box-sizing: border-box;
 `;
 
 const NoteBackgroundPaper = styled.div`
-  
-  background-color: ${(props) => (props.$editBackground=== 'editing' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.8)')};
+  background-color: ${(props) =>
+    props.$editBackground === "editing"
+      ? "rgba(255, 255, 255, 0.4)"
+      : "rgba(255, 255, 255, 0.8)"};
   border: solid black;
   border-radius: 10px;
   height: 85%;
@@ -235,17 +156,20 @@ const NoteBackgroundPaper = styled.div`
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
+ 
 `;
 const NoteHead = styled.div`
-    box-sizing: border-box;
-    border: solid orange;
+  box-sizing: border-box;
+  border: solid orange;
 
   display: grid;
   grid-template-rows: 3vw;
-  grid-template-columns: 30% 20%;
+  grid-template-columns: 18% 64% 18%;
   justify-content: space-between;
   height: 15%;
   width: 100%;
+  .noteHeadWrapper{
+    height: 95%; }
 `;
 
 const NoteCategory = styled.div`
@@ -254,24 +178,32 @@ const NoteCategory = styled.div`
 `;
 
 const NoteTitleWrapper = styled.div`
-display: flex;
-align-items: center;
-box-sizing: border-box;`;
-const NoteTitle = styled.textarea`
+border: solid yellow;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%
+  
+  box-sizing: border-box;
+`;
 
-flex: 1;
-box-sizing: border-box;
+const NoteTitle = styled.textarea`
+  
+
+  box-sizing: border-box;
   border: solid green;
   background-color: transparent;
 
   color: black;
   resize: none;
   outline: none;
-  font-size: 1vw;
-  margin: 0.1vw;
-  padding-left: .5vw;
+  font-size: 2vw;
+  height: 95%;
+  width: 95%;
+
   text-align: center;
-  
+  justify-content: center;
+  padding-top: ;
 `;
 
 const NoteEditButton = styled.button``;
@@ -299,7 +231,14 @@ const TextAreaForEditing = styled.textarea`
   width: 90%;
 `;
 
-
-
 const NoteFoot = styled.div`
-height: 10%`;
+  box-sizing: border-box;
+  border: solid orange;
+
+  display: grid;
+  grid-template-rows: 3vw;
+  grid-template-columns: 35% 20% 35%;
+  justify-content: space-between;
+  height: 15%;
+  width: 100%;
+`;

@@ -3,8 +3,6 @@ import { BASE_URL } from "../utils/globalVariables";
 const loginOrCreateUser = async (
   userDetailsAsObject,
   endOfEndpoint,
-  callback,
-  settingAnError
 ) => {
   try {
     const result = await fetch(`${BASE_URL}/auth/${endOfEndpoint}`, {
@@ -17,25 +15,11 @@ const loginOrCreateUser = async (
 
     const dataFromFetch = await result.json();
 
-    if (endOfEndpoint === "register") {
-      if (dataFromFetch.msg) {
-        settingAnError(dataFromFetch.msg);
-      } else {
-        callback();
-      }
-    }
+    return dataFromFetch;
 
-    if (endOfEndpoint === "login") {
-      if (dataFromFetch.msg) {
-        settingAnError(dataFromFetch.msg);
-      } else {
-        console.log(dataFromFetch.token);
-        callback(dataFromFetch);
-      }
-    }
   } catch (error) {
-    console.error("Error creating entity:", error);
-    return error;
+    
+    throw error;
   }
 };
 
