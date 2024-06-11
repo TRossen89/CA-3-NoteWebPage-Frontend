@@ -34,6 +34,11 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
 
   }
 
+  const seeEventBubbling = (id) =>{
+
+    console.log("Button event handler: " + id);
+  }
+
   const seeNoteDirectlyNested = (id)=>
     {
       navigate(`nestedDirectlyInComponent/${id}`);
@@ -78,10 +83,12 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
   return (
     <PageContainerForNotes>
 
-    <div>
+    <FlexBoxShow>
+
+    <ChildOfFlexBox>
     <ShowId>{idShowing}</ShowId>
-    <button id='errortrigger' onClick={triggerAnError} >Trigger Error</button>
-    </div>
+    <ErrorTrigger id='errortrigger' onClick={triggerAnError} >Trigger Error</ErrorTrigger>
+    </ChildOfFlexBox>
     
       
 
@@ -111,11 +118,8 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
             <td>{note.title}</td>
             <td>{note.date}</td>
             <td>
-              <button id= {note.id} /*onClick={() => seeEventBubbling(note.id)}*/>See event bubbling</button>
-              
+              <button id= {note.id} onClick={() => seeEventBubbling(note.id)}>See event bubbling</button>
             </td>
-          
-            
           </tr>
         ))}
         </tbody>
@@ -156,13 +160,18 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
 
 
       <ShowSingleNoteDiv>
-        <Outlet/>
-      </ShowSingleNoteDiv>
 
       <Routes>
         <Route path="nestedDirectlyInComponent/:theId" element={<SingleNote notesForList={notesForList}/>}/>
       </Routes>
+      
+        <Outlet/>
+      </ShowSingleNoteDiv>
+
+      
       </DivForNotesListAndSingleNote>
+
+      </FlexBoxShow>
       
     </PageContainerForNotes>
   );
@@ -171,6 +180,28 @@ function MyNotesAsList({notesForList, setNotesForlist}) {
 
 export default MyNotesAsList;
 
+
+const FlexBoxShow = styled.div`
+
+  border: solid thick purple;
+  padding: 1vw;
+  gap: 2vw;
+  display: flex;
+  flex-wrap: wrap;
+`
+
+const ChildOfFlexBox = styled.div`
+
+  border: solid thick blue;
+  padding: 1vw;
+  flex: 1;
+
+`
+
+const ErrorTrigger = styled.button`
+  width: 400px;
+  font-size: 25px;
+`
 const ShowSingleNoteDiv = styled.div`
 
   border: solid gold;
@@ -179,9 +210,13 @@ const ShowSingleNoteDiv = styled.div`
 `
 
 const DivForNotesListAndSingleNote = styled.div`
+  
   display: flex;
   padding: 2vw;
-
+  border: solid thick black;
+  flex-direction: column;
+  
+  flex: 1
 
 `
 const ShowId = styled.p`

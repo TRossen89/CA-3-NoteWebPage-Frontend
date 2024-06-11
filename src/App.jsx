@@ -33,115 +33,159 @@ function App() {
     roles: ["user"],
   });
   const [notesForList, setNotesForlist] = useState([]);
-  const [tokenStored, setTokenStored] = useState(false)
+  const [tokenStored, setTokenStored] = useState(false);
 
-
+  const navigate = useNavigate();
 
   const checkTokenExpiry = (exp) => {
     return Date.now() >= exp * 1000;
   };
 
-  
-
   const checkToken = () => {
-    
     const token = localStorage.getItem("token");
     console.log("Checking token: " + token);
-    
+
     if (token) {
-      console.log("There is a token");
       try {
         console.log("Decoding token");
         const decodedToken = jwtDecode(token);
-        
-        console.log("Checking if token has expired")
-        
+
         if (!checkTokenExpiry(decodedToken.exp)) {
+          console.log("Token is not expired");
           setIsLoggedIn(true);
           setLoggedInUser({
             email: decodedToken.email,
             name: decodedToken.name,
             roles: decodedToken.roles,
           });
-
         } else {
-          console.log("Token has expired")
+          console.log("Token has expired");
           setIsLoggedIn(false);
-          console.log("Logged in or not: " + isLoggedIn);
-          
+
           setErrorMessage("Your session has expired. Please log in again.");
           localStorage.clear();
         }
       } catch (e) {
-        console.log("Some error happened when checking token")
+        console.log("Some error happened when checking token");
         setIsLoggedIn(false);
       }
     } else {
-      console.log("There was no token")
+      console.log("There was no token");
       setIsLoggedIn(false);
     }
   };
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn]);
 
-useEffect(() => {
+  useEffect(() => {
+    let timer;
+    
+    console.log("Login status: " + isLoggedIn);
+
+    //checkToken();
+
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      console.log("Token is retrieved from localStorage");
       
-      let timer;
-      checkToken();
-      
 
-      if(tokenStored){
-        console.log("Token is stored")
-        const token = localStorage.getItem("token")
+      try {
+        const decodedToken = jwtDecode(token);
+        console.log("Setting isLoggedIn to true");
+        setIsLoggedIn(true);
 
-  
-      if(token)
-        console.log("Token is retrieved from localStorage")
-
-        {
-          const decodedToken = jwtDecode(token);
-          console.log("Exp from token: " + decodedToken.exp)
-          console.log(Date.now());
-          const timeForExp = decodedToken.exp*1000 - Date.now() + 200;
-          console.log("Expiration time: " + timeForExp)
-
-          timer = setTimeout(()=>{console.log("token is being checked again"); checkToken(); }, timeForExp);
-
-          }
         
-          return () => {clearTimeout(timer)};
-        }
+        setLoggedInUser({
+          email: decodedToken.email,
+          name: decodedToken.name,
+          roles: decodedToken.roles,
+        });
 
-      }, [tokenStored]);
+        const timeForExp = decodedToken.exp * 1000 - Date.now() + 200;
+
+        timer = setTimeout(() => {
+          //console.log("token is being checked again");
+          console.log("Token has expired");
+          setIsLoggedIn(false);
+
+          setErrorMessage("Your session has expired. Please log in again.");
+          localStorage.clear();
+          //checkToken();
+        }, timeForExp);
+
+      } catch (error) {
+
+        console.log(
+          "Some error happened when checking token. This is the error: " +
+            error +
+            " And this is the error message: " +
+            error.message
+        );
+        setIsLoggedIn(false);
+      }
+
+    } else {
+      
+      console.log("There was no token");
+      setIsLoggedIn(false);
+    }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
+
 
 
   return (
     <Routes>
-  
-      <Route path="/"
+      <Route
+        path="/"
         element={
-          <ProtectedRoutes  isLoggedIn={isLoggedIn}>
-            <AppLayout 
-              setIsLoggedIn={setIsLoggedIn}
-              loggedInUser={loggedInUser}
-              setLoggedInUser={setLoggedInUser}
-              setCheckingCredentials={setCheckingCredentials}
-            />
-          </ProtectedRoutes>
+          <ProtectedRoutes
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
+            loggedInUser={loggedInUser}
+            setLoggedInUser={setLoggedInUser}
+            setCheckingCredentials={setCheckingCredentials}
+          />
         }
       >
-
         <Route index element={<MyNotes />} />
-        <Route path="/myNotesTobias" element={<MyNotesTobias/>}/>
+        <Route path="myNotesTobias" element={<MyNotesTobias />} />
         <Route path="/adminPage" element={<UserOverview />} />
         <Route path="/about" element={<About />} />
-        <Route path="/notesAsList/*" element={<ErrorBoundaryMyNotesClass><MyNotesAsList notesForList={notesForList} setNotesForlist={setNotesForlist}/></ErrorBoundaryMyNotesClass>}>
-          <Route path=":singleNoteId" element={<SingleNote notesForList={notesForList} />}/>
+
+        <Route
+          path="/notesAsList/*"
+          element={
+            <ErrorBoundaryMyNotesClass>
+              <MyNotesAsList
+                notesForList={notesForList}
+                setNotesForlist={setNotesForlist}
+              />
+            </ErrorBoundaryMyNotesClass>
+          }
+        >
+          <Route
+            path=":singleNoteId"
+            element={<SingleNote notesForList={notesForList} />}
+          />
         </Route>
 
-        <Route path="/singleNote/:noteId" element={<MySingleNote notesForList={notesForList}/>}/>
+        <Route
+          path="/singleNote/:noteId"
+          element={<MySingleNote notesForList={notesForList} />}
+        />
         <Route path="*" element={<PageNotFound />} />
-
       </Route>
+
       <Route
         path="/login"
         element={

@@ -1,6 +1,8 @@
 import React from 'react';
 
+
 class ErrorBoundaryMyNotesClass extends React.Component {
+  
   constructor(props) {
     super(props);
     this.state = { hasError: false, errorMessage: "" };

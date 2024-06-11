@@ -31,16 +31,17 @@ export default function CreateUser({ setUserJustCreated }) {
 
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
     if (password !== confirmPassword) {
       setError("Password and Confirm Password do not match");
       return;
     }
-    console.log({ email: email, password: password });
 
     const userDetailsEntered = { email: email, password: password };
 
+    try{
     const returnValue = await loginOrCreateUser(userDetailsEntered, "register");
     
     if(returnValue.msg){
@@ -50,6 +51,9 @@ export default function CreateUser({ setUserJustCreated }) {
     else{
       callbackForCreateUser();
     }
+  }catch(error){
+    setError(error.message);
+  }
   };
 
 
@@ -89,11 +93,14 @@ export default function CreateUser({ setUserJustCreated }) {
 
           <Styledwrapper>
           <h1>Sign Up</h1>
+
+
             <form onSubmit={handleSubmit}>
+
               <StyledInputBox>
                 <input
                   type="email"
-                  value={email}
+                  
                   placeholder="Email"
                   onChange={handleEmailChange}
                   required
@@ -121,14 +128,16 @@ export default function CreateUser({ setUserJustCreated }) {
               </StyledInputBox>
               <br></br>
               <StyledButtonWrapper>
-                <StyledButtonSubmit type="submit">
+                <StyledButtonSubmit>
                   Create User
                 </StyledButtonSubmit>
 
                 {/* <StyledButtonLogin type="submit">Login</StyledButtonLogin> */}
               </StyledButtonWrapper>
             </form>
+
             {error && <p>{error}</p>}
+            
             <StyledRegisterLink>
               <p>
                 Already have an account?

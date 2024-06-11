@@ -7,6 +7,7 @@ import { getUserEmails } from "../services/noteService";
 //Modal.setAppElement("#root");
 
 const NoteTobias = ({ note, handleDelete, handleUpdateNote }) => {
+  
   const [noteContent, setNoteContent] = useState(note.content);
   const [noteTitle, setNoteTitle] = useState(note.title);
   const [collaboratorToAdd, setCollaboratorToAdd] = useState("");

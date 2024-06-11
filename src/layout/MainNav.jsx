@@ -3,13 +3,18 @@ import styled from "styled-components";
 import { NavLink, Navigate, useNavigate } from "react-router-dom";
 
 const Nav = styled.nav`
+
+  border: solid green;
+
   display: flex;
+
   justify-content: space-between;
+  align-items: center;
+  
   background: none;
   padding: 20px;
-  align-items: center;
   font-size: x-large;
-  text-align: center;
+  
 
   @media (max-width: 970px) {
     flex-direction: column;
@@ -25,6 +30,7 @@ const MenuContainer = styled.div`
 `;
 
 const StyledLi = styled.li`
+  border: solid yellow;
   display: flex;
   padding-right: 30px;
   transition: all 0.5s ease;
@@ -35,8 +41,8 @@ const StyledLi = styled.li`
 `;
 
 const StyledNavLink = styled(NavLink)`
+  border: solid red;
   display: flex;
-  align-items: center;
   padding: 10px;
   text-decoration: none;
   color: black;
@@ -48,6 +54,7 @@ const StyledNavLink = styled(NavLink)`
 
 
 const Logo = styled(NavLink)`
+  border: solid purple;
   color: black;
   cursor: pointer;
   text-decoration: none;
@@ -91,6 +98,8 @@ const LogoutButton = styled.button`
 `;
 
 const Menu = styled.ul`
+border: solid blue;
+padding: 1vw;
   display: flex;
   list-style: none;
   text-align: center;
@@ -114,6 +123,7 @@ const Hamburger = styled.div`
 `;
 
 const HorisontalLine = styled.hr`
+
   display: none;
   @media (max-width: 970px) {
     display: block;
@@ -137,8 +147,6 @@ const MainNav = ({ setIsLoggedIn, loggedInUser, setLoggedInUser, setCheckingCred
     localStorage.clear();
     setLoggedInUser({ email: "", name: "", roles: ["user"] });
     setCheckingCredentials(false);
-    navigate("/login");
-    console.log("Logged out" )
     navigate("/login");
     console.log("Logged out" )
   };

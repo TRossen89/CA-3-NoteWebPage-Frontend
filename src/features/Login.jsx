@@ -31,11 +31,12 @@ function Login({
     setCheckingCredentials(true);
   };
 
+
   useEffect(() => {
     let timer;
 
-    const callbackForLogin = (fetchData) => {
-      const userDetails = getUserWithRolesFromToken(fetchData.token);
+    const handleFetchedData = (fetchedData) => {
+      const userDetails = getUserWithRolesFromToken(fetchedData.token);
       setIsLoggedIn(true);
       setTokenStored(true);
       setLoggedInUser(userDetails);
@@ -45,7 +46,8 @@ function Login({
       navigate("/");
     };
 
-    const checkingCredentialsWithDelay = async () => {
+    const checkingCredentialsWithDelay = () => {
+      
       const userDetailsForFetchCall = { email: username, password: password };
 
       timer = setTimeout(async () => {
@@ -54,7 +56,6 @@ function Login({
             userDetailsForFetchCall,
             "login"
           );
-
           alert("Credentials checked");
           setShowMessage(false);
 
@@ -65,7 +66,7 @@ function Login({
           
           }
           else{
-            callbackForLogin(returnValue);
+            handleFetchedData(returnValue);
           }
 
         } catch (error) {
@@ -86,11 +87,13 @@ function Login({
     }
 
     return () => {
+      //setErrorMessage("");
       if (timer) {
         clearTimeout(timer);
         setShowMessage(false);
-        
         setCheckingCredentials(false);
+        setTokenStored(false);
+        
       }
     };
   }, [checkingCredentials]);
@@ -150,6 +153,7 @@ function Login({
               </h1>
 
               <form onSubmit={handleLogin}>
+
                 <StyledInputBox>
                   <input
                     type="text"

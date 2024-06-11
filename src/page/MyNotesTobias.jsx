@@ -21,6 +21,7 @@ function MyNotesTobias() {
 
   const [allNotes, setAllNotes] = useState([]);
   const [notes, setNotes] = useState([]);
+
   const [query, setQuery] = useState("");
   const [addNoteModalIsOpen, setAddNoteModalIsOpen] = useState(false);
 
@@ -41,6 +42,7 @@ function MyNotesTobias() {
     }
   };
 
+
   const filterNotes = (query) => {
     if (query === " " || query === "") {
       setNotes([...allNotes]);
@@ -55,11 +57,6 @@ function MyNotesTobias() {
     setQuery(e.target.value);
   };
 
-  // const search = async () => {
-  //   const allNotesFromSearch = await searchByTitle(query);
-  //   setNotes(allNotesFromSearch);
-
-  // }
 
   const handleDelete = async (note) => {
     await deleteNote(note);
@@ -72,12 +69,7 @@ function MyNotesTobias() {
     console.log(note);
     updateNote(note);
   };
-  /*
-  const handleQueryChange = (e) => {
-    setQuery(e.target.value);
-    setNotes([...notes].filter((note) => note.title.includes(e.target.value)));
-  };
-  */
+
 
   const sortNotesByCategory = () => {
     const allNotesSorted = [...notes].sort((n1, n2) =>
@@ -85,6 +77,7 @@ function MyNotesTobias() {
     );
     setNotes(allNotesSorted);
   };
+
 
   const sortNotesByTitle = () => {
     const allNotesSorted = [...notes].sort((n1, n2) =>
@@ -126,8 +119,11 @@ function MyNotesTobias() {
   
   }, []);
 
+
   useEffect(() => {
+
     filterNotes(query);
+    
   }, [query]);
 
 
@@ -293,6 +289,10 @@ const AddNoteDivTobias = styled.div`
     }
   }
 `;
+
+
+
+
 
 const NotesGridContainerTobias = styled.div`
   border: solid blue;
